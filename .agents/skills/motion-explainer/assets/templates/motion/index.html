@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Motion explainer scene</title>
+<!-- Fonts: OFL, installed from npm (@fontsource), never system fonts. -->
+<link rel="stylesheet" href="node_modules/@fontsource/instrument-serif/400.css">
+<link rel="stylesheet" href="node_modules/@fontsource/instrument-serif/400-italic.css">
+<link rel="stylesheet" href="node_modules/@fontsource-variable/geist/index.css">
+<link rel="stylesheet" href="style.css">
+<!-- Motion (motion.dev), npm "motion" pinned exactly in package.json, MIT. -->
+<script src="node_modules/motion/dist/motion.js"></script>
+</head><body>
+<div id="stage">
+  <canvas id="paper" width="1920" height="1080"></canvas>
+  <svg id="ov" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080"><defs id="defs"></defs><g id="cam"></g></svg>
+  <div id="labels"></div>
+  <div id="chrome"></div>
+  <div id="caps"></div>
+</div>
+<script src="js/core.js"></script>
+<script src="js/main.js"></script>
+</body></html>

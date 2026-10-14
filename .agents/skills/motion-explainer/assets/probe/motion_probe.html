@@ -1,0 +1,53 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Motion semantics probe</title></head><body>
+<svg width="200" height="200"><circle id="c" cx="10" cy="10" r="5" opacity="1"/><circle id="w" cx="10" cy="10" r="5" opacity="1"/><circle id="d" cx="10" cy="10" r="5"/></svg>
+<script src="/node_modules/motion/dist/motion.js"></script>
+<script>
+// Re-checks the Motion behaviours the engine depends on. Served by scripts/motion_probe.mjs with the project's motion build.
+const M = window.Motion
+M.MotionGlobalConfig.useManualTiming = true
+const out = {}
+const STEPS = ['setup', 'read', 'resolveKeyframes', 'preUpdate', 'update', 'preRender', 'render', 'postRender']
+const flush = () => { const fd = M.frameData; fd.isProcessing = true; for (let p = 0; p < 2; p++) for (const s of STEPS) if (M.frameSteps[s]) M.frameSteps[s].process(fd); fd.isProcessing = false }
+const at = (anim, t) => { anim.time = t; flush() }
+// A. with WAAPI present, opacity on an SVG element goes to the browser (expect 1 animation, attribute untouched)
+const wa = M.animate(document.getElementById('w'), { opacity: [1, 0] }, { duration: 1 }); wa.pause(); at(wa, 0.5)
+out.A_waapiAnimations = document.getAnimations().length
+wa.cancel && wa.cancel()
+// From here on WAAPI is hidden. Motion memoizes its WAAPI check, so in a real scene this delete must run before ANY animate().
+try { delete Element.prototype.animate } catch (e) {}
+// B. gap semantics: a restated `from` glides across the gap (expect values between 0 and 1 at 1 s and 2.5 s)
+const a = M.motionValue(0)
+const sa = M.animate([[a, [0, 1], { at: 0, duration: 0.3, ease: 'linear' }], [a, [0, 1], { at: 5, duration: 0.3, ease: 'linear' }]]); sa.pause()
+out.B_gapRestated = [1, 2.5, 4.9].map((t) => { at(sa, t); return +a.get().toFixed(3) })
+const b = M.motionValue(0)
+const sb = M.animate([[b, [0, 1], { at: 0, duration: 0.3, ease: 'linear' }], [b, [1, 0], { at: 5, duration: 0.3, ease: 'linear' }]]); sb.pause()
+out.B_gapContinued = [1, 2.5, 4.9].map((t) => { at(sb, t); return +b.get().toFixed(3) })
+// C. before its first segment a value shows that segment's `from` (expect 3, not 7)
+const c = M.motionValue(7)
+const sc = M.animate([[c, [3, 9], { at: 2, duration: 0.5, ease: 'linear' }]]); sc.pause(); at(sc, 0.5); out.C_beforeFirst = c.get()
+// D. physics keys override bounce/visualDuration (expect about 1.16 with mass, 1.0 without)
+const peak = (o) => { const g = M.spring({ keyframes: [0, 1], ...o }); let m = 0; for (let ms = 0; ms < 3000; ms += 5) m = Math.max(m, g.next(ms).value); return +m.toFixed(3) }
+out.D_peakWithMass = peak({ bounce: 0, visualDuration: 0.5, mass: 1 }); out.D_peakNoMass = peak({ bounce: 0, visualDuration: 0.5 })
+// E. zero-delta spring followed by another segment (expect NaN before the second segment)
+const z = M.motionValue(4)
+const sz = M.animate([[z, [4, 4], { at: 0, type: 'spring', stiffness: 200, damping: 20 }], [z, [4, 10], { at: 1, duration: 1, ease: 'linear' }]]); sz.pause()
+out.E_zeroDelta = [0.05, 0.5, 1.5].map((t) => { at(sz, t); return String(z.get()) })
+// F. velocity-only spring: in a sequence it never moves; standalone it does
+const v1 = M.motionValue(0)
+const sv = M.animate([[v1, [0, 0], { at: 0, type: 'spring', velocity: 20, stiffness: 260, damping: 9 }]]); sv.pause()
+out.F_velocityInSequence = [0.05, 0.1].map((t) => { at(sv, t); return String(v1.get()) })
+const v2 = M.motionValue(0)
+const av = M.animate(v2, [0, 0], { type: 'spring', velocity: 20, stiffness: 260, damping: 9, mass: 1 }); av.pause()
+out.F_velocityStandalone = [0.05, 0.1].map((t) => { at(av, t); return +v2.get().toFixed(3) })
+// G. with WAAPI hidden: `opacity` writes CSS style, `attrOpacity` writes the attribute
+const el = document.getElementById('c')
+const g1 = M.animate(el, { opacity: [1, 0] }, { duration: 1, ease: 'linear' }); g1.pause(); at(g1, 0.5)
+out.G_opacity = { attr: el.getAttribute('opacity'), style: el.style.opacity, browserAnimations: document.getAnimations().length }
+const g2 = M.animate(document.getElementById('d'), { attrOpacity: [1, 0] }, { duration: 1, ease: 'linear' }); g2.pause(); at(g2, 0.5)
+out.G_attrOpacity = document.getElementById('d').getAttribute('opacity')
+// H. pathLength writes stroke-dasharray "L (1 - L)" unless pathSpacing is set
+const p = document.createElementNS('http://www.w3.org/2000/svg', 'path'); p.setAttribute('d', 'M0 0 L100 0'); document.querySelector('svg').appendChild(p)
+const h = M.animate(p, { pathLength: [0, 1] }, { duration: 1, ease: 'linear' }); h.pause(); at(h, 0.5); out.H_dasharray = p.getAttribute('stroke-dasharray')
+out.motionVersion = M.version || 'unknown'
+window.OUT = out; window.done = true
+</script></body></html>

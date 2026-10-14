@@ -1,0 +1,6 @@
+{
+ "sets": [
+  {"dir": "geist", "pkg": "@fontsource-variable/geist", "css": ["wght.css"], "alias": "Geist"},
+  {"dir": "instrument-serif", "pkg": "@fontsource/instrument-serif", "css": ["400.css", "400-italic.css"]}
+ ]
+}

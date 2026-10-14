@@ -1,0 +1,7 @@
+interface:
+  display_name: "Motion Explainer"
+  short_description: "Frame-exact motion-graphics explainer videos"
+  default_prompt: "Use $motion-explainer to storyboard and render a 40 second explainer video about how a hash map works."
+
+policy:
+  allow_implicit_invocation: true

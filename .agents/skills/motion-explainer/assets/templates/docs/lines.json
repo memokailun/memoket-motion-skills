@@ -1,0 +1,7 @@
+{
+ "instructions": "A calm, precise engineer explaining a real finding to other developers. Conversational and plain, a little understated, never salesy or dramatic. Natural pace, clear diction.",
+ "lines": [
+  {"id": "c01", "text": "Every hour, half of what's left decays."},
+  {"id": "c02", "text": "After 3 hours, an eighth is left."}
+ ]
+}
