@@ -1,0 +1,12 @@
+# projects and their outputs never go into the skill repository
+work/
+node_modules/
+out/
+renders/
+cuts/
+.thumbnails/
+.hyperframes/
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
