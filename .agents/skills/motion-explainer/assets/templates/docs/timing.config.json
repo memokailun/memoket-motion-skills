@@ -1,0 +1,20 @@
+{
+ "rules": {
+  "lead": 0.15,
+  "tail": 0.25,
+  "gap": 0.35,
+  "hold_per_word": 0.33,
+  "hold_base": 0.7,
+  "sub_swap": 0.15,
+  "close_hold": 2.5,
+  "caption_box_px": 1460,
+  "caption_px": 48,
+  "est_syllables_per_second": 4.6
+ },
+ "cap_extra": {},
+ "gap_extra": {},
+ "split": "auto",
+ "clause": {},
+ "act_breaks": [],
+ "beats": [["half-life-plot", "c01"]]
+}

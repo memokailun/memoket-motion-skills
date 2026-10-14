@@ -1,0 +1,6 @@
+# Python packages for the audio and sheet tools (python 3.10 or newer):
+#   python3 -m venv .venv && .venv/bin/pip install -r <SKILL_DIR>/scripts/requirements.txt
+numpy>=1.26
+scipy>=1.11
+pillow>=10.1
+requests>=2.31

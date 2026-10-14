@@ -1,0 +1,41 @@
+/* House look "Fine Line": porcelain paper, Prussian ink, one vermilion, graphite for what the story sets aside.
+   Tokens are read by js/core.js (K.C). Change the look here, not in the scene code. */
+:root {
+  --paper: #F2F2EE;               /* porcelain ground; the painted paper canvas sits on top */
+  --ink: #1A2433;                 /* Prussian ink: drawing, history, axes */
+  --ink-soft: rgba(26, 36, 51, .64);
+  --verm: #E4472B;                /* vermilion: now, the fresh event, the one detail; never without a meaning */
+  --cap: #3B4453;                 /* caption ink, lighter than drawing ink so captions sit behind the show */
+  --graphite: #6B727C;            /* what the story sets aside; source tags */
+  --ghost: #8A919B;               /* dotted ghosts */
+  --serif: 'Instrument Serif', serif;
+  --sans: 'Geist Variable', sans-serif;
+}
+html, body { margin: 0; padding: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--paper); }
+#stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--paper);
+  -webkit-font-smoothing: antialiased; font-kerning: normal; }
+#paper, #ov, #labels, #chrome, #caps { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+#ov { overflow: visible; }
+#labels, #chrome, #caps { pointer-events: none; }
+#labels { transform-origin: 0 0; }
+.lpos { position: absolute; white-space: nowrap; }
+
+/* stage labels: Instrument Serif italic; numerals roman. One sans (captions, chrome) and one serif per frame. */
+.lab { white-space: nowrap; font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 52px; line-height: 1;
+  color: var(--ink); letter-spacing: .005em; }
+.lab.roman { font-style: normal; }
+.lab.v { color: var(--verm); }
+.lab.soft { color: var(--ink-soft); }
+.lab.graphite { color: var(--graphite); }
+
+/* chrome: lowercase pill badge (illustration | schematic | scenario) top right, source tag top left */
+.badge { position: absolute; right: 110px; top: 60px; opacity: 0; white-space: nowrap;
+  font-family: var(--sans); font-size: 30px; font-weight: 460; letter-spacing: .05em; line-height: 1.15;
+  color: rgba(26, 36, 51, .68); padding: 6px 20px 8px; border: 2px solid rgba(26, 36, 51, .3); border-radius: 999px; }
+.tag { position: absolute; left: 110px; top: 68px; opacity: 0; white-space: nowrap;
+  font-family: var(--sans); font-size: 29px; font-weight: 440; letter-spacing: .01em; line-height: 1.15; color: var(--graphite); }
+
+/* captions: bottom centre, one line, Geist 420 at 48 px; the band y 900 to 1044 belongs to captions only */
+.cap { position: absolute; left: 0; width: 1920px; top: 946px; text-align: center; white-space: nowrap;
+  font-family: var(--sans); font-size: 48px; font-weight: 420; line-height: 1.2; color: var(--cap); letter-spacing: -.004em; opacity: 0; }
+.cap .w { display: inline-block; }
