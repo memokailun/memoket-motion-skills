@@ -156,6 +156,10 @@ ffmpeg -i out/final.mp4 -af ebur128=peak=true -f null - 2>&1 | tail -12         
 
 - Frame 0 is a complete poster, not black: it is the autoplay thumbnail and the loop restart point.
 - verify_final.py: compare a few frames of the final with fresh idle 2x stills put through the same encode path.
+  This is a sampled glyph check, not continuity acceptance. Follow [qa-and-review.md](qa-and-review.md) to inspect
+  every decoded delivery frame and every contact or paw-near-face window at 4x; keep the frame-count evidence.
+- For an X-first delivery, treat frame 0 as the cover. Confirm cover, captions and link at the delivery checkpoint
+  in process.md after checking the actual encoded candidate. Never modify a file the user has declared final.
 - Delivery copy from the CRF 12 master: `ffmpeg -i master.mp4 -c:v libx264 -preset slow -crf 18 -profile:v high
   -level 4.1 -pix_fmt yuv420p -bf 2 -g 60 -colorspace bt709 -color_primaries bt709 -color_trc bt709 -color_range tv
   -c:a copy -movflags +faststart delivery.mp4` (115 s: 104 MB master, 49 MB delivery, SSIM 0.996).

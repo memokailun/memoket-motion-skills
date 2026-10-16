@@ -29,6 +29,14 @@ mkdir -p ~/.agents/skills && ln -sfn "$(pwd)/.agents/skills/motion-explainer" ~/
 A link, not a copy, so `git pull` updates it. If `~/.agents/skills/motion-explainer` is already a copied folder,
 remove it first: otherwise the link lands inside it and Codex lists the skill twice.
 
+Claude Code reads the same skill through `.claude/skills/motion-explainer`, a relative link to
+`.agents/skills/motion-explainer`, when you start it inside this repository. To use it from other folders, link it
+into `~/.claude/skills` the same way:
+
+```sh
+mkdir -p ~/.claude/skills && ln -sfn "$(pwd)/.agents/skills/motion-explainer" ~/.claude/skills/motion-explainer
+```
+
 ## Prerequisites
 
 | Tool | Version | Why |
@@ -78,6 +86,13 @@ HYPERFRAMES_NO_TELEMETRY=1 DO_NOT_TRACK=1 HYPERFRAMES_NO_UPDATE_CHECK=1 HYPERFRA
   npx hyperframes render -c cuts/first3.html --fps 30 --quality draft -o out/draft3.mp4
 ```
 
+## What is new
+
+Production now starts with one confirmed preflight checklist and pauses for story, look, character, a 5 to 8 s sample
+with sound, the first full cut and final delivery choices. New character guidance covers connected anatomy, clean
+occlusion, restrained acting and checks proven against real faults. Every delivered frame gets a continuity review;
+X-first covers, late URL changes and frozen deliverables have explicit procedures.
+
 ## Asking Codex for a video
 
 Start Codex in the repository and describe the film, the audience and where it will be watched. For example:
@@ -89,9 +104,10 @@ Start Codex in the repository and describe the film, the audience and where it w
 - "Re-render work/backoff at final quality and run the audio and sync checks."
 
 What to expect:
-- Codex asks before anything that costs money (it gets the number of paid voice calls from a `--dry-run` first),
-  shows you the direction and blocked stills before building the whole film, and shows the draft before the long
-  final render.
+- Codex first asks you to confirm sources and their freshness, assets, claims, output settings, paid-call estimates,
+  links and frozen work. It waits for your answer before production. It then shows labelled options and pauses for
+  story/copy, look, character design and refinements when present, a short rendered sample with sound, the first full
+  cut, the final render and the delivery package. Silence is not approval. Paid voice counts come from `--dry-run`.
 - Rendering and checks start headless Chrome and a local server, which Codex's default sandbox blocks. The sandbox
   also has no network, so `npm install`, `pip install`, voice calls and the first HyperFrames render (it downloads
   Chrome Headless Shell) need approval too. Approve those commands to run outside the sandbox when Codex asks
@@ -108,7 +124,7 @@ What to expect:
   SKILL.md                 the instructions Codex follows (contract, workflow, taste, acceptance)
   agents/openai.yaml       display name and invocation policy for Codex
   references/              process, story and copy, design language, Motion engine, HyperFrames, render pipeline,
-                           voice and sound, QA and review (read on demand)
+                           character animation, voice and sound, QA and review (read on demand)
   scripts/                 render.mjs and the QA gates, voice and timing tools, sound and mix, sheets,
                            hf/ helpers for HyperFrames (prepare, cuts, slowmo finish, seek audit, stills)
   assets/templates/        motion/ and hyperframes/ demo projects, docs/ (direction, lines, timing config)

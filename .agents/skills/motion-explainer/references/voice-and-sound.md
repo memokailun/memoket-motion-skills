@@ -20,8 +20,18 @@ Record the voice first, build the timing sheet from the measured takes, then ani
 this way reported "plan_vo: holds 0, errors 0". Holds (frozen frames inserted where a take outruns its caption) are a
 fallback: a hold freezes the picture, and plan_vo refuses captions that never settle.
 
-Without a key or before the copy is final, block the film with an estimated sheet (`timing.py build --estimate`),
-then record, rebuild the sheet from the takes, and re-check every beat anchored to a word.
+After preflight, without a key or before copy approval, use an estimated sheet (`timing.py build --estimate`) only
+for blocking the currently approved stage. Stop at the story and look checkpoints before animation. For a voiced
+film, record approved copy, rebuild the sheet from the takes, and re-check every beat anchored to a word.
+
+For a no-voice film, approve caption copy and measured reading holds instead; an estimated sheet is a starting point
+for that review, not evidence of recorded speech. Skip voice calls, plan_vo and voice-correlation checks. With sound
+only, synthesize cues, use mux.sh at -18 LUFS and verify cue alignment in the decoded file; an explicitly silent
+film has no audio stream. A missing key does not authorize changing a voiced brief to no voice.
+
+The 5 to 8 s hardest-beat sample includes sound before the whole film is built, unless the user explicitly chose
+silence. For a first-frame cover, shift the picture, captions, cues and audio by one documented offset and verify
+sync after encoding; see process.md for the 0.5 s hold plus 0.3 s cross-fade example.
 
 For two engines (or two cuts) of one film, one timing pass writes one voice-over and one sheet that every build follows
 exactly. Settle sub-caption splits, number formats and copy order before the sheet is shared: some fixes later could not

@@ -41,7 +41,8 @@ Contents
 12. Copy hygiene everywhere on screen: no em or en dashes, arrow characters, middle dots, curly or corner quotes,
     asterisk emphasis. No AI-generated or AI-voice disclosure lines inside the video; the publisher handles disclosure.
 13. Characters: if the story needs an animal, a line-drawn cat with a job in the story (one clean ink line, paper fill,
-    never talking). House preference.
+    never talking). House preference. Read [character-animation.md](character-animation.md) before designing or
+    animating one; approve the design and its refinements before building the rig.
 
 Motion grammar that held across films:
 - Within an act nothing cuts; things morph (a ring unrolls into a trace, a curve straightens when its axes go
@@ -82,7 +83,8 @@ Tokens (template `style.css`):
   per frame read as clutter). Mono only for things that are literally code or settings. Geist Variable for captions,
   badges and tags: one sans and one serif per frame. Fonts are OFL from npm, loaded locally; no system fonts.
 - Captions: bottom centre, one line, Geist 420 at 48 px, `--cap` ink, letter-spacing -0.004em, top 946 px; words rise
-  9 px on a 300/26 spring with a 22 ms stagger, the line fades out in 0.15 s; up on frame 0 with no fade. The band y 900
+  9 px on a 300/26 spring with a 22 ms stagger, the line fades out in 0.15 s; up on the first film frame with no fade, shifted with any
+  approved cover offset (process.md). The band y 900
   to 1044 belongs to captions only (capband.mjs proves it). A line wider than the caption box (`caption_box_px` in
   timing.config.json, 1,460 px, measured at 48 px) is split by timing.py into consecutive single-line sub-captions at a
   sentence break; never two lines at once.
@@ -90,7 +92,7 @@ Tokens (template `style.css`):
   `schematic` for drawn shapes, `scenario` for a made-up example), Geist 30 px; a source tag top left in graphite,
   author and year in plain words, at most four words plus `preprint`. Both ride on their sheet's chrome layer, ignore
   the camera, and are visible exactly while their plot is. At 30 px they are about 6 px on a phone, so say the
-  disclosure aloud once too.
+  disclosure aloud once too, or make it legible on screen in a no-voice film.
 - Pen lines: every line is a filled outline whose width follows pen pressure (ramps in, tapers out) with a whisper of
   wobble, so nothing looks plotted. Primary strokes 4.5 to 6.5 px. Draws run quart-out ([0.25, 1, 0.5, 1]) in 0.35 to
   0.5 s; retractions in-out cubic 0.45 s staggered 60 ms, outer to inner.
@@ -191,14 +193,15 @@ A 16:9 video in a phone feed is about 390 pt wide, a scale of about 0.2.
 
 1. Write the brief's look in terms of the medium (diagrams, curves, real formulas, ink lines, paper), never in terms
    of effects. "Premium, light, depth, bloom" in a brief produced starfields and glowing water.
-2. Build three short style frames (frame 0 to about 8 s, plus two key stills) and show them side by side as one reel
-   to the person who owns the film; that person picks the look. Judges are for legibility, truth and craft defects;
-   they once ranked last the look that was chosen.
+2. After story approval, render two or three still style frames in different directions using the same beat. Show
+   them side by side, labelled A, B, C, with a one-line recommendation; stop for the owner's choice or comments.
+   Refine the chosen look and obtain approval. Save animation for the 5 to 8 s hardest-beat checkpoint in process.md.
+   Judges are for legibility, truth and craft defects; they once ranked last the look the owner chose.
 3. Write the look as tokens in CSS custom properties (ground, one ink, one accent with one meaning, a set-aside grey,
    caption ink), one serif and one sans, a caption spec, a badge spec, and a mark grammar: what each colour, line style
    and shape means. Reviewers check every new mark against this grammar.
 4. Check every effect for determinism before liking it: no masks or group opacity on fading content, no blur on text,
-   no always-moving layers, no full-frame shaders. Run determinism.mjs on a style frame.
+   no always-moving background layers, no full-frame shaders. Run determinism.mjs on a style frame.
 5. Check the style frames at 390 px and muted; check that light grounds and fine lines survive an encode at the
    delivery bitrate.
 6. Keep the default look unless the story needs another; a new look for its own sake is not a reason.
