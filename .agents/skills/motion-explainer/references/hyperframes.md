@@ -203,7 +203,8 @@ frames 0 to 1 s. Without blur, the alternative finish is a supersampled 4K maste
    acting. The skill's determinism.mjs and qa_scene.mjs also run on HyperFrames pages through the shim.
 4. Render versus stills at every second (after a 1.5 px blur, count pixels over 40/255): twice the still was wrong
    (the transform-none class), twice the render found what stills could not. Always read frames of the actual render.
-5. Contact sheets of the delivery file: 1 s sheets, 0.25 s windows through transitions, 390 px phone checks.
+5. Contact sheets of the delivery file: 1 s sheets, 0.25 s windows through transitions, 390 px phone checks. These
+   are navigation aids; continuity acceptance also reviews every decoded delivery frame (qa-and-review.md).
 6. Frame-difference scans for named faults ("stops then lurches"): one continuous settle curve fixed it.
 
 ## 11. Fonts
@@ -231,12 +232,14 @@ holds, so time captions to the voice before animating and anchor marks to word t
 - Over about 60 s: one master timeline in a kit namespace, chapter files that build only inside their containers and
   time window, kit helpers with absolute times, boundary states owned by the kit and checked by a tool, and an
   append-only request log for kit changes (most seek-order lessons were found there).
-- A global time warp after the build (every child's start and end through a monotonic map; ops on quiet points; report
-  tweens starting inside a cut) fixes pacing without re-authoring.
+- A global time warp may extend approved timing (every child's start and end through a monotonic map). Never use it
+  to skip action inside an unchanged shot. Keep pose, tail and camera continuous; prefer whole music bars of extra
+  time and reopen the affected checkpoint before changing approved length (process.md).
 - 1:1 cut: the same timeline with a layout flag on the root, re-laid out, never cropped; regenerate after every change;
   render with `--resolution square-4k`.
-- Poster first frame without disturbing the film: shift every tween with `tl.shiftChildren(P, true, 0)` and write the
-  poster as the static DOM state.
+- Poster first frame: shifting tweens alone leaves audio and caption metadata behind. Use the cover procedure in
+  process.md: one shared offset for the film timeline, caption/word windows, cues and audio, with final decoded sync
+  verification. Show the actual encoded opening for approval; a custom thumbnail is not assumed for X.
 
 ## 14. Shader transitions: tested, rejected
 

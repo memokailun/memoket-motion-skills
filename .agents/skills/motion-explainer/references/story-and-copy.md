@@ -1,7 +1,8 @@
 # Story, copy and truth
 
 Read before writing the brief, the hooks or the locked copy, and before any truth review. Captions are the voice word
-for word, so copy is written for the ear and checked like a claim.
+for word when voiced, so copy is written for the ear and checked like a claim. For no-voice films, approve caption
+copy and reading time at the same story checkpoint. Follow the preflight and human stops in process.md.
 
 Contents
 1. Story structures that worked
@@ -26,24 +27,27 @@ Contents
   pictures already on screen; the payoff of the hook's question about two thirds in; an honest twist that cuts
   against the easy reading; a practical takeaway the viewer can do tomorrow.
 - Three or four act breaks, all marked by one transition type, so a muted viewer feels the structure.
-- Plan the cuts before the voice: write which line goes first if the read runs long.
+- Plan any script shortening before voice and story approval. Never shorten a performed action by skipping time
+  inside unchanged framing; use the continuous-action procedure in process.md.
 - Keep distance from the last episode: reusing its framing and axes reads as "episode 1.5".
 - The end rhymes with the beginning: the last frame is a bookend of frame 0.
 
 ## 2. The hook and the last frame
 
 The hook (most of the paid "weak opening" findings came from breaking one of these):
-- Frame 0 is already beautiful, readable at 390 px, already shows the tension, and the caption is up on frame 0. It is
-  the autoplay thumbnail and the loop restart point.
+- Frame 0 is already beautiful, readable at 390 px, and shows the tension with the opening caption or approved cover
+  copy. It is the autoplay thumbnail and loop restart point. An inserted cover shifts the film's caption schedule
+  with the rest of the film (process.md); it does not start the voice early.
 - Something the viewer did not expect happens within the first second (frame 0 may already be in motion: a bead
   mid-fall above an empty slot).
 - The first spoken line is about 2.5 s, concrete, literally true of the example, and opens a loop the video closes.
   Measure the take; do not estimate (7 words ran 2.46 s).
 - By about 6 s the viewer knows the stakes. Light the contradiction on the word that names it (swapping two lighting
   steps cut the caption-to-picture lag from 3.25 s to 1.1 s).
-- Write at least three hooks (frame 0, first-second event, first line with measured length), judge them on the real
-  animated first 6 s at 390 px, pick one, say why. The literal line beats the clever one ("added a paragraph that
-  repeats" beat "the same thing twice", which overstated).
+- Write at least three hooks (frame 0, first-second event, first line with estimated length) and show the concrete
+  alternatives with the script and beats. The owner picks before animation. After look and any character approval,
+  verify the chosen opening at 390 px with measured voice if used; the hardest-beat sample may be this opening.
+  The literal line beats the clever one ("added a paragraph that repeats" beat "the same thing twice", which overstated).
 - A flash is not a hook if it reads as astronomy or a lens flare.
 
 The last frame was flagged as weak in every episode until it was designed at concept stage:
@@ -66,7 +70,7 @@ The last frame was flagged as weak in every episode until it was designed at con
   the payoff sound, or the sound is masked).
 - No filler openers ("Here's the thing"), no rhetorical "right?", no hype words, no aphorisms, no "the takeaway is".
 - Hooks describe user experiences only and never claim how a vendor's system works inside.
-- Say the disclosure out loud once (badges are 6 px on a phone): "The inputs are fixed samples.", "In one preprint",
+- Disclose once in the voice, or legibly on screen for a no-voice film (badges alone are 6 px on a phone): "The inputs are fixed samples.", "In one preprint",
   "A test endpoint sends eleven pieces, one every 0.3 seconds."
 - Localised films: one short line per beat (about 14 characters in Japanese), held max(2.5 s, characters / 4 + 1 s);
   get a native speaker's review of copy in a language the requester cannot read, and explain each line to them in
@@ -74,8 +78,8 @@ The last frame was flagged as weak in every episode until it was designed at con
 
 ## 4. Numbers, captions and the transcribe-back check
 
-- Lock copy before voice and voice before animation. After lock only how a number is written may change, and the
-  change is logged in direction.md.
+- Lock copy before voice and voice before animation. After lock only number formatting may change without reopening
+  the story checkpoint; log the change in direction.md. Other copy changes require the user's renewed approval.
 - The transcribe-back check is an exact match after lowercasing, hyphens to spaces and stripped punctuation. Paid
   examples: "400 first" heard as "401st"; a hyphenated acronym came back without its hyphen on 9 of 11 takes; "May
   12" as "May 12th"; spelled numbers ("seven", "eighteen") came back as digits on almost every take (1 of 15 passed). Choose the written form the

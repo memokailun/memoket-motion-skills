@@ -36,10 +36,9 @@ Not for adding animation to an app's or website's own UI, slide decks, or editin
 - Python tools run with the project's venv (`.venv/bin/python`, on Windows `.venv\Scripts\python`), made in workflow
   step 1. Every script prints its usage with `--help` and exits 2 on wrong arguments; the render, QA and gate tools end
   with a machine-readable `RESULT {...}` line.
-- Required checkpoints (do not skip them; without them Codex would proceed): before the first paid voice call, get
-  the count from `vo.py make ... --dry-run` (no calls, no key read), tell the user and wait for a yes; show the
-  direction and blocked stills and wait for approval before building the whole film; show the draft's sheets and the
-  expected render time before a full-length final. Never publish or upload.
+- Required human checkpoints are part of the workflow below, including preflight before production starts. Stop at
+  each one, show the actual artifacts, ask for a choice or comments, and wait for the user's answer. Silence is not
+  approval; a review agent's recommendation is not the owner's decision. Never publish or upload.
 
 ## Non-negotiables
 
@@ -54,12 +53,15 @@ Not for adding animation to an app's or website's own UI, slide decks, or editin
 3. Truth: no state the data never had (no rewinds, invented in-between values, markers moving backwards); data lands
    with zero overshoot; compared things share one style; the page refuses to load when its data drifts; computed
    plots carry a badge; every number traces to facts.md or a trace.
-4. Captions are the voice word for word, one line at a time, timed from measured takes; after copy lock only how a
-   number is written may change.
+4. With voice, captions are the voice word for word, one line at a time, timed from measured takes. Without voice,
+   lock the caption copy and validate reading time. After copy lock only number formatting may change without
+   reopening the story checkpoint; never change a frozen deliverable.
 5. Copy hygiene on screen and in everything you write: no em or en dashes, arrow characters, middle dots, curly or
    corner quotes, asterisk emphasis; no AI-disclosure lines in the video.
 6. One full render at a time per machine (`scripts/with_lock.sh`); determinism checks only on an idle machine; never
    touch another project's running render; never edit a scene while its final renders.
+7. Preserve continuous action, connected character anatomy and clean occlusion on every frame. A passed sampled
+   gate cannot prove continuity. Preserve anything the user declares final, including its files and dependencies.
 
 ## Requirements
 
@@ -82,43 +84,83 @@ only, `OPENAI_API_KEY` (paid). npm packages install per project from the templat
 
 ## Workflow
 
-Each step names its command; the full loop with review passes is in references/process.md.
+### Preflight: stop before starting
+
+Read [references/process.md](references/process.md) for the checklist and evidence rules. Before research, source-code
+reading, scaffolding, design or rendering, inventory only the material and metadata needed for one short checklist:
+
+- Sources: repositories, apps, pages and documents; each local repository's path, current branch, last commit date,
+  and whether it is behind origin, with the freshness of that evidence. Ask the user to pull or confirm the snapshot
+  before reading code. Confirm real screenshots or recordings exist, and logo, font and colour files and versions.
+- Facts: the research or fact sheet to use and the person signing off on numbers and product claims.
+- Output: platforms, aspect ratio, length, language, voice or none, captions, music and deadline.
+- Paid services: whether voice or other paid APIs are allowed, estimated calls by service and the agreed cap before
+  any call. Update the estimate from a dry run when the script is ready.
+- On-screen links: exact text and destination, live or placeholder, and who will confirm them.
+- Frozen work: everything already final that must not change.
+
+Show known values and missing items together; ask the user to confirm or correct the checklist, then stop. Do not
+start until the user answers and required inputs are resolved. Cached origin data is not proof of a current remote;
+with no network or repository-command access, mark freshness unknown and obtain the user's pull or snapshot confirmation.
+
+### Production and human checkpoints
+
+The full loop, presentation format and approval record are in references/process.md. At each stop, show labelled
+A, B, C options side by side where useful, recommend one with a one-line reason, and wait for a choice or comments.
 
 1. Scaffold outside SKILL_DIR: `node SKILL_DIR/scripts/init.mjs <project> --engine motion`, then
    `cd <project> && npm install`, then the Python venv: `python3 -m venv .venv && .venv/bin/pip install -r
    SKILL_DIR/scripts/requirements.txt`. HyperFrames: `--engine hyperframes`, then
    `node SKILL_DIR/scripts/hf/prepare.mjs` after install and after every copy change.
 2. Story and truth: brief.md and facts.md (verified sources, derived numbers with assumptions, a Do-not-say list).
-   Three concepts with three hooks each, judged in separate passes, then a locked `direction.md` (template copied in
-   step 1). Checkpoint: the user approves the direction and the look.
-3. Lock copy in `lines.json` (one id per caption line):
-   `.venv/bin/python SKILL_DIR/scripts/copycheck.py --lines lines.json`.
-4. Voice (paid; ask first): `.venv/bin/python SKILL_DIR/scripts/vo.py make lines.json out/vo --dry-run` prints the
+   Compare concepts and hooks on paper, then draft direction.md and lines.json with a beat outline. Run
+   `.venv/bin/python SKILL_DIR/scripts/copycheck.py --lines lines.json`. Story checkpoint: show the complete script
+   and beat outline with concrete alternatives for open choices; stop for the user's approval before locking copy.
+3. Look checkpoint: render two or three style frames in different directions using the approved story; show them
+   side by side at full size and 390 px. Stop for the user's selection or revisions, then record the look tokens.
+4. Character checkpoint (when present): read [references/character-animation.md](references/character-animation.md).
+   Show two or three character options in comparable poses, stop for a choice, then show refinements and wait again
+   before rigging or animating. Record proportions, personality and contact poses in direction.md.
+5. Voice (paid; ask first): `.venv/bin/python SKILL_DIR/scripts/vo.py make lines.json out/vo --dry-run` prints the
    paid-call count without calling; tell the user, wait for a yes, then run it without `--dry-run` and with
    `--max-calls` set to the agreed number. Fix flags within the re-roll cap (`vo.py roll`, `vo.py use`; roll and words
-   take `--dry-run` too). No key yet: skip and use `--estimate` in step 5.
-5. Timing sheet: `node SKILL_DIR/scripts/measure_text.mjs --lines lines.json --out widths.json`, then
+   take `--dry-run` too). Other paid APIs need a count and approval too. No key yet: use estimated timing for blocking;
+   do not silently change an agreed voiced film into a silent one. No voice by choice: skip voice calls and fit captions
+   to reading time, with the approved music or sound design if any.
+6. Timing sheet: `node SKILL_DIR/scripts/measure_text.mjs --lines lines.json --out widths.json`, then
    `.venv/bin/python SKILL_DIR/scripts/timing.py build --lines lines.json --vo out/vo --config timing.config.json
    --out timing.json` (or `--estimate`), then `.venv/bin/python SKILL_DIR/scripts/timing.py check timing.json`.
-6. Block stills before motion: `node SKILL_DIR/scripts/render.mjs --scene index.html --stills 0,0.5,1,4 --stilldir
+7. Block the sample as stills before motion: `node SKILL_DIR/scripts/render.mjs --scene index.html --stills 0,0.5,1,4 --stilldir
    out/stills --sheet out/stills.png`, and look at them at 390 px wide too.
-7. Build the scene to timing.json: captions and word times only from the sheet (`K.captions`, `K.word`; `W()` in
-   HyperFrames), a data guard in setup, cues next to the motion they belong to.
-8. Gates after every meaningful change: `render.mjs --scene index.html --warnings-only` (0 and 0), `qa_scene.mjs`,
-   `capband.mjs`, `stillness.mjs`, `speed_audit.mjs` (each `--scene index.html`), and on an idle machine
-   `determinism.mjs --scene index.html`. HyperFrames adds `npm run check` and `hf/seek_audit.mjs index.html`.
-9. Draft: `node SKILL_DIR/scripts/render.mjs --scene index.html --out out/draft.mp4` (HyperFrames: `hf/make_cut.mjs`
-   then `npx hyperframes render`), then
-   `.venv/bin/python SKILL_DIR/scripts/review_sheets.py video out/draft.mp4 out/sheets` and a 390 px sheet
-   (`review_sheets.py at ... --tile 390`). Read every sheet yourself.
-10. Review passes (truth, hook, viewer, phone or density, craft), each read-only, each writing
+8. Hardest-beat checkpoint: build only a 5 to 8 s sample of the riskiest action or transition, rendered with sound
+   (no narration if no voice was chosen; follow an explicitly silent brief). Show it with any alternatives or fixes
+   at matching times, plus 4x contact close-ups for characters. Stop for approval before building the whole film.
+9. Block the full film as stills, then build to timing.json: captions and word times only from the sheet (`K.captions`, `K.word`; `W()`
+   in HyperFrames), a data guard in setup, cues next to the motion they belong to. Play action through; extend by whole
+   music bars instead of skipping time within a shot. See process.md for cuts, first-frame covers and late changes.
+10. Gates after every meaningful change: `render.mjs --scene index.html --warnings-only` (0 and 0), `qa_scene.mjs`,
+    `capband.mjs`, `stillness.mjs`, `speed_audit.mjs` (each `--scene index.html`), and on an idle machine
+    `determinism.mjs --scene index.html`. HyperFrames adds `npm run check` and `hf/seek_audit.mjs index.html`.
+    Character films also need the per-frame part, occlusion, visibility and root-speed probes in character-animation.md;
+    prove every new check fails its known bad frame before trusting a pass.
+11. First full cut: `node SKILL_DIR/scripts/render.mjs --scene index.html --out out/draft.mp4` (HyperFrames: `hf/make_cut.mjs`
+    then `npx hyperframes render`), then
+    `.venv/bin/python SKILL_DIR/scripts/review_sheets.py video out/draft.mp4 out/sheets` and a 390 px sheet
+    (`review_sheets.py at ... --tile 390`). Read every sheet yourself. Add the intended sound and captions; show the
+    playable full cut, sheets and concrete revision options. Stop for the user's comments or approval before revisions.
+12. Review passes (truth, hook, viewer, phone or density, craft), each read-only, each writing
     `review/<round>/<lens>.json`; one fix pass; a polish pass; an independent verify pass (references/qa-and-review.md).
-11. Voice fit check: `node SKILL_DIR/scripts/plan_vo.mjs --scene index.html --vo out/vo/vo.json --out out/warp.json
-    --tail 0.25` must report holds 0, errors 0. Checkpoint before the final render.
-12. Final: `bash SKILL_DIR/scripts/with_lock.sh -- node SKILL_DIR/scripts/render.mjs --scene index.html --warp
+13. Voice fit check (when voiced): `node SKILL_DIR/scripts/plan_vo.mjs --scene index.html --vo out/vo/vo.json --out out/warp.json
+    --tail 0.25` must report holds 0, errors 0. Show the revised cut and estimated final render time; stop for a go.
+14. Final candidate: `bash SKILL_DIR/scripts/with_lock.sh -- node SKILL_DIR/scripts/render.mjs --scene index.html --warp
     out/warp.json --out out/silent.mp4 --scale 2`, then cue dump, `synth.py`, `mix.py`, `mux.sh`, `check_sync.py` on
     the mix and on audio decoded from the final, loudness and final-file checks (references/voice-and-sound.md
-    section 8, references/render-pipeline.md section 8).
+    section 8, references/render-pipeline.md section 8). For no voice, omit voice warp and voice sync checks; verify
+    sound cues directly, or omit the audio chain for an explicitly silent output. Review continuity on every decoded
+    frame of the delivery candidate, not just sampled sheets; inspect every contact and paw-near-face moment at 4x.
+15. Delivery checkpoint: show the actual cover/first frame, caption treatment and exact on-screen link alongside the
+    checked final candidate. Stop for the user's approval before delivery. Record frozen files and a tested procedure
+    for any agreed late URL change. Do not modify deliverables the user has declared final.
 
 ## Taste
 
@@ -127,7 +169,8 @@ Each step names its command; the full loop with review passes is in references/p
   bloom, particles, shader warps or clip-art.
 - Light painted paper, never pure white or dark. Prussian ink, one vermilion detail with one meaning, graphite for what
   the story sets aside.
-- Something happens in the first second; stakes by about 6 s; frame 0 is a finished poster with the caption up.
+- Something happens in the first second; stakes by about 6 s; frame 0 is a finished poster with the approved cover
+  copy or opening caption up. An inserted cover uses the shared timing offset in references/process.md.
 - The last frame is the most beautiful one: a simpler rhyme of frame 0, held 4 to 8 s.
 - Within an act things morph; between acts a fresh sheet slides over the old one, three or four times per film.
 - Every caption gets a meaningful stage event on its key word; no still stage over about 2 s except a held image.
@@ -156,28 +199,40 @@ Each step names its command; the full loop with review passes is in references/p
 - synth.py gains are relative to each cue type's own level; absolute dB values come out near silent.
 - Dump cues with the same `--warp` as the video, or check_sync compares the wrong windows.
 - Load during a render can raster a wrong glyph; verify finals with verify_final.py and read the 1 s sheets.
+- Those sampled checks do not cover character continuity. A tail can vanish between samples; a connected silhouette
+  can still have a fused chin and forearm. Read the character and every-frame review procedures before animating one.
+- For an X-first film, assume no custom thumbnail: design frame 0 as the cover and approve its hold, transition and
+  matching audio delay (references/process.md). Do not add a poster after final approval.
 
 ## Acceptance checklist (report the numbers)
 
-- [ ] timing.py check: violations 0; plan_vo: holds 0, errors 0
+- [ ] preflight and each applicable human checkpoint have an explicit answer tied to the reviewed artifact version
+- [ ] timing.py check: violations 0; when voiced, plan_vo: holds 0, errors 0
 - [ ] render.mjs --warnings-only: 0 engine warnings, 0 browser animations
 - [ ] qa_scene: all ok; capband: no ink outside sheet slides; copycheck: problems 0
 - [ ] determinism (idle machine): 0 mismatches; HyperFrames: seek_audit nothing beyond the control, npm run check passes
 - [ ] stillness and speed audits: every flag fixed or listed as designed in notes/build.md
 - [ ] frame 0 is a poster; something moves in the first second; stakes by about 6 s; last frame held 4 to 8 s
-- [ ] every plot with computed or drawn values carries its badge exactly while visible; the disclosure is spoken once
+- [ ] every plot with computed or drawn values carries its badge exactly while visible; disclose once in voice,
+      or legibly on screen when there is no voice
 - [ ] review findings: every blocker and major fixed or explained in review/<round>/fix.md; verify pass clean
-- [ ] check_sync: violations 0 on the mix and on decoded final audio; about -16 LUFS, true peak under -1 dBFS
+- [ ] when voiced, check_sync: violations 0 on mix and decoded final audio; about -16 LUFS, true peak under -1 dBFS
 - [ ] ffprobe shows bt709 tags and level 4.1; every frame decodes; 1 s and 390 px sheets of the final read
+- [ ] every delivered frame reviewed for continuity; every contact and paw-near-face window inspected at 4x
+- [ ] character probes (if present): frames checked/total, gaps/seams/detachments 0, visibility pops 0, root speed
+      within the agreed cap, stretch at most about 1.15; each new check fails the real fault then passes the fix
+- [ ] cover, captions and link approved; audio offset verified; late-change procedure recorded; frozen files unchanged
 
 ## References (read when the step comes up)
 
-- references/process.md: the whole loop as passes, files to keep, checkpoints, resource etiquette. Read at the start
-  of any real film.
+- [references/process.md](references/process.md): preflight, human checkpoints, continuous edits, platform covers and
+  late-change procedures. Read before starting any film, review or revision.
 - references/story-and-copy.md: story structures, hooks, the last frame, copy for the ear, numbers and
   transcription, the truth system, misleading shapes and states, scope words. Read before the brief and copy lock.
 - references/design-language.md: taste principles, the Fine Line and Galley Proof looks as tokens, phone sizes,
   rejected looks, how to make a new look. Read before blocking stills.
+- [references/character-animation.md](references/character-animation.md): connected rigs, occlusion, part visibility,
+  restrained acting and per-frame probes. Read before designing, animating or reviewing any character.
 - references/motion-engine.md: why each piece of the template's core.js exists, sequence semantics, SVG and text
   rules, spring feel, speed caps, helper API, sheets, lift-out copies. Read before writing Motion scene code.
 - references/hyperframes.md: seek semantics, tw(), transforms and layers, cuts, slowmo blur, fonts, render
