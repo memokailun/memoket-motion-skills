@@ -29,6 +29,14 @@ mkdir -p ~/.agents/skills && ln -sfn "$(pwd)/.agents/skills/motion-explainer" ~/
 A link, not a copy, so `git pull` updates it. If `~/.agents/skills/motion-explainer` is already a copied folder,
 remove it first: otherwise the link lands inside it and Codex lists the skill twice.
 
+Claude Code reads the same skill through `.claude/skills/motion-explainer`, a relative link to
+`.agents/skills/motion-explainer`, when you start it inside this repository. To use it from other folders, link it
+into `~/.claude/skills` the same way:
+
+```sh
+mkdir -p ~/.claude/skills && ln -sfn "$(pwd)/.agents/skills/motion-explainer" ~/.claude/skills/motion-explainer
+```
+
 ## Prerequisites
 
 | Tool | Version | Why |
